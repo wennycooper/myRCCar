@@ -59,8 +59,9 @@
 因為電池同時要供電給 Arduino 跟馬達，馬達啟動瞬間電流變化可能讓電壓下垂，這是設計電源時特別要注意、之後測試如果遇到「莫名重開機」要回頭檢查的地方。
 
 <p align="center">
-  <img src="images/5.%20TB6612接腳圖.jpg" alt="TB6612FNG 模組實際腳位標示特寫" width="420"><br>
-  <sub>TB6612FNG 模組實際腳位標示，對照接腳對照表用</sub>
+  <img src="images/5.%20TB6612接腳圖.jpg" alt="TB6612FNG 模組實際腳位標示特寫" width="420">
+  <img src="images/5-1.%20HC-05接腳圖(車子就是透過這個連上手機的).jpg" alt="HC-05 藍芽模組實際腳位標示特寫" width="420"><br>
+  <sub>左：TB6612FNG 實際腳位標示　右：HC-05 藍芽模組——車子就是透過這顆連上手機的，模組上寫著 TXD/RXD 是 3.3V LEVEL，代表已經內建處理過電位轉換</sub>
 </p>
 
 ## 動手組裝
