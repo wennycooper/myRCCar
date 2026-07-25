@@ -91,6 +91,8 @@
 
 實際測試：Arduino 燒好程式、手機跟 HC-05 配對、App 點「連接藍芽」顯示「已連接」後，按著四個方向鍵，車子前進、後退、左轉、右轉都正確，放開手指也確實停下來，**(c) 階段測試通過**。
 
+一開始都是用 **MIT AI2 Companion** 這個 App 即時預覽測試，後來透過 App Inventor 的 `Build → App (provide QR code for .apk)` 把專案編譯成真正的 `.apk`，掃 QR code 下載安裝到手機上，變成一個獨立的 App（桌面上有自己的 icon，不用再開電腦、不用開 Companion，直接點開就能用）。安裝時手機會跳出「不明來源」的警告，因為不是從 Google Play 商店下載的，允許安裝來源後就能裝了。
+
 原本規劃還有一個 (d) 階段，想做「按住加速、放開減速」的漸進速度控制。後來評估目前 (a)(b)(c) 已經把最初「手機藍芽遙控車」的目標完整做出來、原理也都搞懂了，決定把 (d) 收起來，不繼續往下做，把這個階段的成果當作這次專題的最終版本。
 
 ## 目前進度
@@ -108,6 +110,7 @@
 | `motor_test_b/motor_test_b.ino` | (b) | 前進、後退、原地左轉、原地右轉測試 |
 | `bt_car_control/bt_car_control.ino` | (c) | 接收藍芽指令並控制馬達 |
 | [`app_inventor/BTCarControl.aia`](./app_inventor/BTCarControl.aia) | (c) | App Inventor 專案原始檔（可重新匯入編輯） |
+| [`app_inventor/BTCarControl.apk`](./app_inventor/BTCarControl.apk) | (c) | 編譯好的安裝檔，可直接裝到 Android 手機上獨立執行 |
 | `app_inventor/design.png`、`app_inventor/block.png` | (c) | Designer 畫面與 Blocks 邏輯截圖 |
 
 ## 心得反思
