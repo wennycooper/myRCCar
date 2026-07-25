@@ -4,6 +4,11 @@
 **時間：** 2026 年暑假<br>
 **主題：** 用 Arduino + 藍芽模組做一台手機可以遙控的雙輪驅動小車
 
+<p align="center">
+  <img src="images/7.%20完成圖.jpg" alt="完成的雙輪驅動藍芽遙控車" width="520"><br>
+  <sub>完成品——Arduino + TB6612FNG + HC-05，麵包板全部鎖固在車體上</sub>
+</p>
+
 ---
 
 ## 動機
@@ -36,6 +41,11 @@
 
 **為什麼需要 TB6612FNG？** Arduino 的腳位本身電流很小，沒辦法直接驅動馬達，需要透過這顆驅動晶片放大電流，同時用 IN1/IN2 兩隻腳位的高低電位組合，決定馬達轉動的方向。
 
+<p align="center">
+  <img src="images/1.%20全部零件.jpg" alt="專案用到的所有零件" width="520"><br>
+  <sub>剛拿到的所有零件</sub>
+</p>
+
 ## 電路設計
 
 先由 AI 協助畫出電路方塊圖跟完整的接腳對照表，再自己照著插到麵包板上。完整的電路設計頁面（含方塊圖、零件清單、接腳對照表、組裝順序）見 [`circuit-design.html`](./circuit-design.html)。主要接腳：
@@ -47,6 +57,31 @@
 - 電池 6V 同時接到 Arduino `Vin` 跟 TB6612 `VM`，所有模組共地（GND 接在一起）
 
 因為電池同時要供電給 Arduino 跟馬達，馬達啟動瞬間電流變化可能讓電壓下垂，這是設計電源時特別要注意、之後測試如果遇到「莫名重開機」要回頭檢查的地方。
+
+<p align="center">
+  <img src="images/5.%20TB6612接腳圖.jpg" alt="TB6612FNG 模組實際腳位標示特寫" width="420"><br>
+  <sub>TB6612FNG 模組實際腳位標示，對照接腳對照表用</sub>
+</p>
+
+## 動手組裝
+
+車體、輪子、馬達是暑假一開始就先組好的；電子零件（Arduino、麵包板、電池盒）則是後來才鑽孔鎖上去。
+
+<p align="center">
+  <img src="images/2.%20輪胎與馬達鎖上去了.jpg" alt="兩顆TT馬達與輪胎鎖上底盤" width="420">
+  <img src="images/3.%20底盤正面照.jpg" alt="底盤正面照" width="420"><br>
+  <sub>左：馬達與輪胎鎖上底盤　右：底盤正面</sub>
+</p>
+
+<p align="center">
+  <img src="images/4.%20花了很大功夫才鑽了孔把電池組麵包板還有Arduino鎖固上去.jpg" alt="電池盒、麵包板、Arduino鎖固上車體" width="520"><br>
+  <sub>花了很大功夫才鑽了孔，把電池盒、麵包板還有 Arduino 鎖固上去</sub>
+</p>
+
+<p align="center">
+  <img src="images/6.%20線路全部接通了.jpg" alt="所有線路接通，準備開始測試" width="520"><br>
+  <sub>所有線路接通了，準備開始 (a) 階段測試</sub>
+</p>
 
 ## 學習歷程紀錄
 
