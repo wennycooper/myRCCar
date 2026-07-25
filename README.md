@@ -62,7 +62,7 @@
 ### Step 3：(b) 前進 / 後退 / 左轉 / 右轉
 把單顆馬達的控制包成 `moveForward()`、`moveBackward()`、`turnLeft()`、`turnRight()` 幾個函式，轉彎採用「原地轉」的方式：左轉時左輪反轉、右輪正轉，右轉相反。實際把車子放到地上測試，四個動作方向都正確。
 
-### Step 4：(c) 藍芽連線與指令控制（進行中）
+### Step 4：(c) 藍芽連線與指令控制
 接上 HC-05，先手動配對藍芽、再用手機上的 Bluetooth Serial 測試 App 送出 `F`（前進）等單一字元指令，Arduino 收到後控制對應的馬達動作。
 
 **遇到的 bug：** 第一次測試時，敲了 `F` 之後馬達完全沒有動，Serial Monitor 還印出一堆看不懂的空白跟亂碼字元。後來跟爸爸一起分析才發現：手機的 Bluetooth Serial App 送出文字後，會額外多送一個「換行字元」，而原本的程式是「收到什麼字元就整個當作新指令」，所以實際發生的事情是：
@@ -74,7 +74,23 @@
 
 這個 bug 讓我第一次實際體會到「序列通訊是一個一個位元組（byte）在傳」，跟我原本想像「整串文字一次送到」不一樣，也學到寫通訊程式時要對輸入資料做基本的檢查跟過濾，不能假設對方永遠只送我想要的東西。
 
-**下一步：** Arduino 端指令解析修好後，接下來要在 App Inventor 做出實際的手機介面（連接藍芽的按鈕、四個方向鍵），並用 `TouchDown`／`TouchUp` 事件讓按著移動、放開停止。
+**App Inventor 手機介面：** Arduino 端指令解析修好後，接著在 App Inventor 做出實際的手機介面：一個「連接藍芽」按鈕（用 `ListPicker` 列出已配對裝置、`BluetoothClient1.Connect` 連線）、一個顯示連線狀態的文字、還有排成十字形的四個方向鍵。
+
+<p align="center">
+  <img src="app_inventor/design.png" alt="App Inventor Designer 畫面：十字形方向鍵置中排列" width="360"><br>
+  <sub>Designer 畫面 — 十字形方向鍵</sub>
+</p>
+
+方向鍵的邏輯用 `TouchDown`／`TouchUp` 事件：手指按下時送出方向字元（`F`/`B`/`L`/`R`），放開時統一送 `S` 停止，這樣操作起來才會是「按著移動、放開就停」的直覺手感，而不是按一下衝一段距離。
+
+<p align="center">
+  <img src="app_inventor/block.png" alt="App Inventor Blocks 畫面：四個方向鍵的 TouchDown/TouchUp 積木邏輯" width="700"><br>
+  <sub>Blocks 邏輯 — 四個方向鍵的 TouchDown / TouchUp</sub>
+</p>
+
+寫 Blocks 積木的時候也踩了幾個小坑，例如一開始分不清楚「屬性（teal 色、沒有 call）」跟「方法（紫色、有 call）」的積木長什麼樣子，找 `BluetoothClient1.Connect` 找錯抽屜；也曾經抓不準怎麼把一塊積木拖進另一塊的凹槽裡。這些雖然都是小地方，但也是第一次接觸「積木式」寫程式的方式跟寫文字程式碼很不一樣的地方——邏輯結構要用「拼圖形狀對不對」去理解，而不是打字打對就好。
+
+實際測試：Arduino 燒好程式、手機跟 HC-05 配對、App 點「連接藍芽」顯示「已連接」後，按著四個方向鍵，車子前進、後退、左轉、右轉都正確，放開手指也確實停下來，**(c) 階段測試通過**。
 
 ### Step 5：(d) 漸進加減速（尚未開始）
 規劃中：按住方向鍵時速度隨時間慢慢增加，放開時慢慢減少，而不是像現在一樣「一按就全速、一放就急停」。
@@ -83,7 +99,7 @@
 
 - [x] (a) 馬達正反轉測試
 - [x] (b) 前進 / 後退 / 左轉 / 右轉
-- [ ] (c) 電路接線與 Arduino 端指令解析完成；App Inventor 手機 App 還沒開始做
+- [x] (c) 電路接線、Arduino 端指令解析、App Inventor 手機 App 四方向鍵，實測通過
 - [ ] (d) 按住加速、放開減速
 
 ## 專案檔案
@@ -94,6 +110,8 @@
 | `motor_test_a/motor_test_a.ino` | (a) | 兩顆馬達分別正轉、反轉測試 |
 | `motor_test_b/motor_test_b.ino` | (b) | 前進、後退、原地左轉、原地右轉測試 |
 | `bt_car_control/bt_car_control.ino` | (c) | 接收藍芽指令並控制馬達 |
+| [`app_inventor/BTCarControl.aia`](./app_inventor/BTCarControl.aia) | (c) | App Inventor 專案原始檔（可重新匯入編輯） |
+| `app_inventor/design.png`、`app_inventor/block.png` | (c) | Designer 畫面與 Blocks 邏輯截圖 |
 
 ## 心得反思
 
