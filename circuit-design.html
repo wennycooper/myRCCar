@@ -1,0 +1,327 @@
+<title>藍芽遙控車 電路設計</title>
+<style>
+:root{
+  --bg:#f5f2ea;
+  --panel:#fffdf7;
+  --panel-2:#efeadd;
+  --ink:#23201b;
+  --ink-soft:#5b564c;
+  --line:#ddd6c4;
+  --accent:#b5651d;
+  --accent-soft:#f0dcc5;
+  --wire-power:#b23b2e;
+  --wire-gnd:#2a2823;
+  --wire-a:#c98a1f;
+  --wire-b:#2f7d74;
+  --wire-bt:#4d5aa3;
+  --font-ui: ui-sans-serif, "Segoe UI", "Hiragino Sans GB", "PingFang TC", "Microsoft JhengHei", Arial, sans-serif;
+  --font-mono: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg:#17181a;
+    --panel:#1f2124;
+    --panel-2:#26282c;
+    --ink:#eee9de;
+    --ink-soft:#a8a296;
+    --line:#34353a;
+    --accent:#e08a45;
+    --accent-soft:#3a2c1c;
+    --wire-power:#e2685a;
+    --wire-gnd:#cfd0d3;
+    --wire-a:#e0a83f;
+    --wire-b:#4fa39d;
+    --wire-bt:#8890d6;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#17181a; --panel:#1f2124; --panel-2:#26282c; --ink:#eee9de; --ink-soft:#a8a296; --line:#34353a;
+  --accent:#e08a45; --accent-soft:#3a2c1c; --wire-power:#e2685a; --wire-gnd:#cfd0d3; --wire-a:#e0a83f; --wire-b:#4fa39d; --wire-bt:#8890d6;
+}
+:root[data-theme="light"]{
+  --bg:#f5f2ea; --panel:#fffdf7; --panel-2:#efeadd; --ink:#23201b; --ink-soft:#5b564c; --line:#ddd6c4;
+  --accent:#b5651d; --accent-soft:#f0dcc5; --wire-power:#b23b2e; --wire-gnd:#2a2823; --wire-a:#c98a1f; --wire-b:#2f7d74; --wire-bt:#4d5aa3;
+}
+*{box-sizing:border-box;}
+body{
+  margin:0; background:var(--bg); color:var(--ink);
+  font-family:var(--font-ui); line-height:1.65;
+  padding:48px 24px 96px;
+}
+.page{max-width:900px; margin:0 auto; display:flex; flex-direction:column; gap:44px;}
+.wide{max-width:1150px;}
+.eyebrow{
+  font-size:12.5px; font-weight:700; letter-spacing:.14em; text-transform:uppercase;
+  color:var(--accent); margin:0 0 10px;
+}
+h1{font-size:clamp(26px,4vw,34px); margin:0 0 12px; text-wrap:balance; letter-spacing:-.01em;}
+h2{font-size:20px; margin:0 0 4px; letter-spacing:-.005em;}
+.lede{color:var(--ink-soft); max-width:65ch; font-size:15.5px;}
+section{display:flex; flex-direction:column; gap:16px;}
+.hint{color:var(--ink-soft); font-size:14px; max-width:70ch;}
+
+/* stepper */
+.stepper{display:grid; grid-template-columns:repeat(4,1fr); gap:14px;}
+.step{
+  background:var(--panel); border:1px solid var(--line); border-radius:10px;
+  padding:16px 16px 18px; position:relative;
+}
+.step .letter{
+  font-family:var(--font-mono); font-weight:700; font-size:13px; color:var(--accent);
+  display:inline-block; border:1px solid var(--accent); border-radius:5px; padding:1px 7px; margin-bottom:10px;
+}
+.step h3{font-size:15px; margin:0 0 6px;}
+.step p{margin:0; font-size:13.3px; color:var(--ink-soft);}
+.step:not(:last-child)::after{
+  content:"→"; position:absolute; right:-14px; top:20px; color:var(--line); font-size:15px;
+}
+@media (max-width:760px){
+  .stepper{grid-template-columns:1fr;}
+  .step:not(:last-child)::after{display:none;}
+}
+
+/* callout */
+.callout{
+  background:var(--accent-soft); border-left:3px solid var(--accent);
+  border-radius:6px; padding:18px 20px; display:flex; flex-direction:column; gap:8px;
+}
+.callout h3{margin:0; font-size:15px;}
+.callout ul{margin:0; padding-left:20px; font-size:14.5px; color:var(--ink);}
+.callout li{margin-bottom:6px;}
+.callout li:last-child{margin-bottom:0;}
+
+/* tables */
+.table-wrap{overflow-x:auto; border:1px solid var(--line); border-radius:8px;}
+table{border-collapse:collapse; width:100%; font-size:14px; min-width:520px;}
+th,td{text-align:left; padding:10px 14px; border-bottom:1px solid var(--line); vertical-align:top;}
+th{background:var(--panel-2); font-weight:700; font-size:12.5px; text-transform:uppercase; letter-spacing:.04em; color:var(--ink-soft);}
+tr:last-child td{border-bottom:none;}
+td.pin, th.pin{font-family:var(--font-mono); font-variant-numeric:tabular-nums; white-space:nowrap;}
+.grp-row td{background:var(--panel-2); font-weight:700; font-size:12.5px; text-transform:uppercase; letter-spacing:.05em; color:var(--accent); padding-top:8px; padding-bottom:8px;}
+.dot{display:inline-block; width:9px; height:9px; border-radius:50%; margin-right:6px; vertical-align:middle;}
+
+/* diagram */
+.diagram-card{background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:20px; }
+.diagram-scroll{overflow-x:auto;}
+svg.schematic{min-width:900px; width:100%; height:auto; display:block;}
+.legend{display:flex; flex-wrap:wrap; gap:18px; margin-top:16px; font-size:13px; color:var(--ink-soft);}
+.legend span.dot{width:16px; height:4px; border-radius:2px; margin-right:8px;}
+
+/* assembly list */
+ol.assembly{margin:0; padding-left:22px; display:flex; flex-direction:column; gap:10px; font-size:14.5px;}
+ol.assembly li::marker{font-family:var(--font-mono); font-weight:700; color:var(--accent);}
+ol.assembly b{color:var(--ink);}
+
+.next{
+  background:var(--panel); border:1px solid var(--line); border-radius:10px; padding:20px;
+  font-size:14.5px; color:var(--ink-soft);
+}
+.next b{color:var(--ink);}
+
+.parts-note{font-size:13px; color:var(--ink-soft);}
+footer.foot{font-size:12.5px; color:var(--ink-soft); text-align:center; padding-top:8px;}
+</style>
+
+<div class="page">
+
+  <header>
+    <p class="eyebrow">專案規劃 · 藍芽遙控車</p>
+    <h1>Arduino 藍芽遙控車 — 電路設計</h1>
+    <p class="lede">雙輪驅動車體 + TB6612FNG 馬達驅動 + HC-05 藍芽模組 + App Inventor，全部共用一組 4×1.5V 電池盒供電（Arduino Uno）。下面先把電路跟接腳定下來，你照著插好麵包板、完成 (a)(b) 兩階段測試沒問題後，我們再進到藍芽跟 App Inventor 的部分。</p>
+  </header>
+
+  <section>
+    <h2>四個階段</h2>
+    <div class="stepper">
+      <div class="step">
+        <span class="letter">a</span>
+        <h3>馬達正反轉測試</h3>
+        <p>兩顆 TT 馬達各自正轉、反轉，確認 TB6612 接線方向正確。</p>
+      </div>
+      <div class="step">
+        <span class="letter">b</span>
+        <h3>動作邏輯</h3>
+        <p>寫成前進 / 後退 / 左轉 / 右轉函式，車體實際跑跑看。</p>
+      </div>
+      <div class="step">
+        <span class="letter">c</span>
+        <h3>藍芽遙控</h3>
+        <p>接上 HC-05，App Inventor 四個方向按鈕即時控制。</p>
+      </div>
+      <div class="step">
+        <span class="letter">d</span>
+        <h3>漸進加減速</h3>
+        <p>按住加速、放開減速，PWM 隨時間平滑變化。</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>電源共用注意事項</h2>
+    <div class="callout">
+      <h3>你選的是「4 顆電池同時供電 Arduino + 馬達」</h3>
+      <ul>
+        <li>Uno 內建穩壓 IC 建議 Vin 至少 7V 才穩定，6V 已經在邊緣。馬達啟動瞬間電流突增會讓電壓下垂（sag），可能讓 Arduino 重開機——常見症狀是藍芽突然斷線、程式像是「從頭重跑」。</li>
+        <li>建議在 TB6612 的 <b>VM／GND</b> 腳位附近、麵包板電源軌上，並聯一顆 <b>100～470µF 電解電容</b>，緩衝馬達啟動瞬間的電流尖峰（電容長腳接正極、短腳接負極，別接反）。</li>
+        <li>盡量用新的鹼性電池。如果之後常常無預警重開機，先換電池排除電力問題；還是不行的話，再考慮把 Arduino 改成 USB 供電、電池只留給馬達。</li>
+      </ul>
+    </div>
+  </section>
+
+  <section>
+    <h2>零件清單</h2>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>零件</th><th>數量</th><th>備註</th></tr></thead>
+        <tbody>
+          <tr><td>Arduino Uno</td><td>1</td><td>—</td></tr>
+          <tr><td>TB6612FNG 馬達驅動模組</td><td>1</td><td>—</td></tr>
+          <tr><td>HC-05 藍芽模組</td><td>1</td><td>已內建 RX 分壓，直接對接即可</td></tr>
+          <tr><td>TT 馬達（含輪子）</td><td>2</td><td>已測試通過</td></tr>
+          <tr><td>4×1.5V 電池盒（6V）</td><td>1</td><td>建議用新電池</td></tr>
+          <tr><td>麵包板 + 杜邦線</td><td>1 組</td><td>公對母、公對公都準備一些</td></tr>
+          <tr><td>電解電容 100～470µF</td><td>1（建議）</td><td>接在 VM／GND 之間穩壓用</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="wide">
+    <h2>電路方塊圖</h2>
+    <p class="hint">先看模組之間怎麼連，實際每一條線的腳位對應請看下面的接腳對照表。</p>
+    <div class="diagram-card">
+      <div class="diagram-scroll">
+        <svg class="schematic" viewBox="0 0 1150 660" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="電路方塊圖：電池盒對 Arduino Uno 與 TB6612FNG 供電，Arduino 與 TB6612FNG 以控制線相連並驅動左右馬達，Arduino 與 HC-05 以序列埠相連">
+          <style>
+            .box{fill:var(--panel); stroke:var(--ink-soft); stroke-width:1.4;}
+            .boxtitle{font-family:var(--font-ui); font-weight:700; font-size:16px; fill:var(--ink);}
+            .boxsub{font-family:var(--font-ui); font-size:11.5px; fill:var(--ink-soft);}
+            .pin{font-family:var(--font-mono); font-size:11px; fill:var(--ink-soft);}
+            .wlabel{font-family:var(--font-ui); font-size:11.5px; fill:var(--ink-soft);}
+            .bundle{stroke-linecap:round; fill:none;}
+          </style>
+
+          <!-- Battery -->
+          <rect class="box" x="40" y="440" width="220" height="90" rx="10"/>
+          <text class="boxtitle" x="150" y="478" text-anchor="middle">4×1.5V 電池盒</text>
+          <text class="boxsub" x="150" y="498" text-anchor="middle">6V，共用電源</text>
+
+          <!-- Arduino -->
+          <rect class="box" x="380" y="360" width="220" height="170" rx="10"/>
+          <text class="boxtitle" x="490" y="405" text-anchor="middle">Arduino Uno</text>
+          <text class="boxsub" x="490" y="424" text-anchor="middle">主控板</text>
+
+          <!-- TB6612 -->
+          <rect class="box" x="760" y="360" width="210" height="170" rx="10"/>
+          <text class="boxtitle" x="865" y="405" text-anchor="middle">TB6612FNG</text>
+          <text class="boxsub" x="865" y="424" text-anchor="middle">馬達驅動模組</text>
+
+          <!-- HC-05 -->
+          <rect class="box" x="380" y="180" width="220" height="90" rx="10"/>
+          <text class="boxtitle" x="490" y="220" text-anchor="middle">HC-05</text>
+          <text class="boxsub" x="490" y="239" text-anchor="middle">藍芽模組</text>
+
+          <!-- Motor L -->
+          <rect class="box" x="1000" y="308" width="130" height="80" rx="10"/>
+          <text class="boxtitle" x="1065" y="340" text-anchor="middle" font-size="14">左馬達</text>
+          <text class="boxsub" x="1065" y="358" text-anchor="middle">TT Motor L</text>
+
+          <!-- Motor R -->
+          <rect class="box" x="1000" y="500" width="130" height="80" rx="10"/>
+          <text class="boxtitle" x="1065" y="532" text-anchor="middle" font-size="14">右馬達</text>
+          <text class="boxsub" x="1065" y="550" text-anchor="middle">TT Motor R</text>
+
+          <!-- connector 1: battery -> arduino (power) -->
+          <path class="bundle" d="M260,463 L380,443" stroke="var(--wire-power)" stroke-width="3.5"/>
+          <path class="bundle" d="M260,477 L380,457" stroke="var(--wire-gnd)" stroke-width="3.5"/>
+          <text class="wlabel" x="270" y="435" text-anchor="middle">6V</text>
+          <text class="wlabel" x="270" y="500" text-anchor="middle">GND</text>
+
+          <!-- connector 2: battery -> TB6612 (power, routed below) -->
+          <path class="bundle" d="M140,530 L140,575 L820,575 L820,530" stroke="var(--wire-power)" stroke-width="3.5"/>
+          <path class="bundle" d="M160,530 L160,592 L842,592 L842,530" stroke="var(--wire-gnd)" stroke-width="3.5"/>
+          <text class="wlabel" x="490" y="568" text-anchor="middle">VM（6V）</text>
+          <text class="wlabel" x="490" y="608" text-anchor="middle">GND</text>
+
+          <!-- connector 3: arduino <-> TB6612 control bundle -->
+          <path class="bundle" d="M600,445 L760,445" stroke="var(--accent)" stroke-width="9" stroke-opacity="0.55"/>
+          <text class="wlabel" x="680" y="432" text-anchor="middle">D4–D10 控制線 + 5V（8條）</text>
+
+          <!-- connector 4: arduino <-> HC-05 -->
+          <path class="bundle" d="M490,360 L490,270" stroke="var(--wire-bt)" stroke-width="9" stroke-opacity="0.55"/>
+          <text class="wlabel" x="560" y="318" text-anchor="middle">TX/RX + 5V/GND</text>
+
+          <!-- connector 5: TB6612 -> Motor L -->
+          <path class="bundle" d="M970,400 L1000,352" stroke="var(--wire-a)" stroke-width="7"/>
+          <text class="wlabel" x="985" y="382" text-anchor="middle">AO1/AO2</text>
+
+          <!-- connector 6: TB6612 -> Motor R -->
+          <path class="bundle" d="M970,490 L1000,538" stroke="var(--wire-b)" stroke-width="7"/>
+          <text class="wlabel" x="985" y="512" text-anchor="middle">BO1/BO2</text>
+
+          <!-- pin dots -->
+          <circle cx="380" cy="443" r="4" fill="var(--wire-power)"/>
+          <circle cx="380" cy="457" r="4" fill="var(--wire-gnd)"/>
+          <circle cx="820" cy="530" r="4" fill="var(--wire-power)"/>
+          <circle cx="842" cy="530" r="4" fill="var(--wire-gnd)"/>
+        </svg>
+      </div>
+      <div class="legend">
+        <span><span class="dot" style="background:var(--wire-power)"></span>+6V / 5V 電源</span>
+        <span><span class="dot" style="background:var(--wire-gnd)"></span>GND（共同地）</span>
+        <span><span class="dot" style="background:var(--wire-a)"></span>左馬達控制訊號</span>
+        <span><span class="dot" style="background:var(--wire-b)"></span>右馬達控制訊號</span>
+        <span><span class="dot" style="background:var(--wire-bt)"></span>藍芽序列訊號</span>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>接腳對照表</h2>
+    <p class="hint">這張表是實際插線時的依據，優先看這張表，圖只是幫你理解模組間的關係。</p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Arduino</th><th>接到</th><th>說明</th></tr></thead>
+        <tbody>
+          <tr class="grp-row"><td colspan="3">電源（共同地一定要接在一起）</td></tr>
+          <tr><td class="pin">Vin</td><td class="pin">電池盒 (+)</td><td>6V 主電源</td></tr>
+          <tr><td class="pin">GND</td><td class="pin">電池盒 (−)、TB6612 GND、HC-05 GND</td><td>共同地</td></tr>
+          <tr><td class="pin">5V</td><td class="pin">TB6612 VCC、HC-05 VCC</td><td>邏輯電源（3.3～5V 元件用這條，不是電池直接的 6V）</td></tr>
+          <tr class="grp-row"><td colspan="3">藍芽（HC-05）— SoftwareSerial</td></tr>
+          <tr><td class="pin">D2</td><td class="pin">HC-05 TXD</td><td>Arduino 收（軟體序列埠 RX）</td></tr>
+          <tr><td class="pin">D3</td><td class="pin">HC-05 RXD</td><td>Arduino 送（軟體序列埠 TX）</td></tr>
+          <tr class="grp-row"><td colspan="3">TB6612FNG — 左馬達（A 側）</td></tr>
+          <tr><td class="pin">D4</td><td class="pin">STBY</td><td><b>一定要在 setup() 拉 HIGH</b>，沒接或是 LOW 的話兩顆馬達都不會動</td></tr>
+          <tr><td class="pin">D5（PWM）</td><td class="pin">PWMA</td><td>左馬達轉速</td></tr>
+          <tr><td class="pin">D7</td><td class="pin">AIN1</td><td>左馬達方向控制 1</td></tr>
+          <tr><td class="pin">D8</td><td class="pin">AIN2</td><td>左馬達方向控制 2</td></tr>
+          <tr><td class="pin">—</td><td class="pin">TB6612 AO1 / AO2 → 左馬達</td><td>接到左邊 TT 馬達的兩隻腳，正反隨意，測試時再對調</td></tr>
+          <tr class="grp-row"><td colspan="3">TB6612FNG — 右馬達（B 側）</td></tr>
+          <tr><td class="pin">D6（PWM）</td><td class="pin">PWMB</td><td>右馬達轉速</td></tr>
+          <tr><td class="pin">D9</td><td class="pin">BIN1</td><td>右馬達方向控制 1</td></tr>
+          <tr><td class="pin">D10</td><td class="pin">BIN2</td><td>右馬達方向控制 2</td></tr>
+          <tr><td class="pin">—</td><td class="pin">TB6612 BO1 / BO2 → 右馬達</td><td>接到右邊 TT 馬達的兩隻腳</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="parts-note">D5／D6 特別選有 PWM（~）標示的腳位，因為要拿來調速度。D2／D3 故意避開 D0/D1（那兩隻是 USB 燒錄程式用的序列埠，接了 HC-05 會導致上傳程式失敗），也避開 D4～D10 避免跟馬達驅動腳位衝突。</p>
+  </section>
+
+  <section>
+    <h2>麵包板組裝建議順序</h2>
+    <ol class="assembly">
+      <li><b>先架好電源軌：</b>麵包板正負軌接到電池盒——先不要放電池！</li>
+      <li><b>插上三個模組：</b>Arduino、TB6612FNG、HC-05 都先插上麵包板，只接 GND 跟電源腳位，用電表量一下電池 (+) 跟 GND 之間沒有短路。</li>
+      <li><b>接訊號線：</b>照上面對照表接 D2～D10。</li>
+      <li><b>特別檢查 STBY：</b>確認 D4 有接到 TB6612 的 STBY，這條漏接是最常見的「馬達完全不會轉」原因。</li>
+      <li><b>先不接馬達，通電測試：</b>放電池，Arduino 接電腦跑個簡單的 LED blink，確認開機穩定、不會因為電源不穩重開機。</li>
+      <li><b>最後才接馬達：</b>把左右 TT 馬達接到 AO1/AO2、BO1/BO2，準備進入 (a) 階段的正反轉測試。</li>
+    </ol>
+  </section>
+
+  <div class="next">
+    <b>下一步：</b>電路照這樣接沒問題的話，跟我說一聲，我就給你 (a) 階段的測試程式——兩顆馬達分別正轉、反轉，用來驗證接線方向對不對。如果板子型號、電源方式想改，或是零件跟這裡假設的接腳排列不一樣，也直接告訴我，我再調整。
+  </div>
+
+  <footer class="foot">藍芽遙控車專案 · 電路規劃 v1</footer>
+</div>
