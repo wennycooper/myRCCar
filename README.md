@@ -135,6 +135,15 @@
 
 原本規劃還有一個 (d) 階段，想做「按住加速、放開減速」的漸進速度控制。後來評估目前 (a)(b)(c) 已經把最初「手機藍芽遙控車」的目標完整做出來、原理也都搞懂了，決定把 (d) 收起來，不繼續往下做，把這個階段的成果當作這次專題的最終版本。
 
+### 延伸學習：用 Fritzing 畫正式電路圖
+
+功能都做完之後，想把電路圖用比較正式的方式留下紀錄，而不是只有手繪或截圖，所以另外找時間學了 **Fritzing**——一套開源的電路圖繪製軟體，很多 Maker 專案的電路圖都是用它畫的。摸索了一下怎麼放元件、怎麼牽線、怎麼標示電源軌之後，畫出了下面這張完整的電路圖。
+
+<p align="center">
+  <img src="images/schem.png" alt="用 Fritzing 畫的完整電路圖" width="700"><br>
+  <sub>用 Fritzing 畫的電路圖（藍芽模組用軟體內建的 Bluetooth Mate 元件代替實際使用的 HC-05，接線方式相同）</sub>
+</p>
+
 ## 目前進度
 
 - [x] (a) 馬達正反轉測試
@@ -152,6 +161,7 @@
 | [`app_inventor/BTCarControl.aia`](./app_inventor/BTCarControl.aia) | (c) | App Inventor 專案原始檔（可重新匯入編輯） |
 | [`app_inventor/BTCarControl.apk`](./app_inventor/BTCarControl.apk) | (c) | 編譯好的安裝檔，可直接裝到 Android 手機上獨立執行 |
 | `app_inventor/design.png`、`app_inventor/block.png` | (c) | Designer 畫面與 Blocks 邏輯截圖 |
+| [`images/schem.png`](./images/schem.png) | — | 用 Fritzing 畫的正式電路圖 |
 
 ## 心得反思
 
