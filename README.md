@@ -5,13 +5,10 @@
 **主題：** 用 Arduino + 藍芽模組做一台手機可以遙控的雙輪驅動小車
 
 <p align="center">
-  <video src="images/demo.mp4" controls width="520"></video><br>
-  <sub>成果展示——手機 App 四方向鍵即時控制小車前進、後退、左轉、右轉</sub>
-</p>
-
-<p align="center">
-  <img src="images/7.%20完成圖.jpg" alt="完成的雙輪驅動藍芽遙控車" width="520"><br>
-  <sub>完成品——Arduino + TB6612FNG + HC-05，麵包板全部鎖固在車體上</sub>
+  <a href="images/demo.mp4">
+    <img src="images/7.%20完成圖.jpg" alt="點擊播放成果展示影片" width="520">
+  </a><br>
+  <sub>▲ 點擊圖片播放成果展示影片——完成品：Arduino + TB6612FNG + HC-05，麵包板全部鎖固在車體上；手機 App 四方向鍵即時控制小車前進、後退、左轉、右轉</sub>
 </p>
 
 ---
